@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend/colors.dart';
@@ -22,6 +23,12 @@ class _BottomNavState extends State<BottomNav> {
   int _currentIndex = 2;
 
   final screens = [Giveaway(), Coupons(), Home(), Deals(), Favorite()];
+
+  @override
+  void initState() {
+    print(FirebaseAuth.instance.currentUser.phoneNumber);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {

@@ -2,13 +2,15 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:frontend/screens/authentication/login.dart';
 import 'package:frontend/screens/bottomNav/bottomNav.dart';
-import 'package:frontend/screens/profile/claim_your_wins.dart';
-import 'package:frontend/screens/profile/customer_service.dart';
-import 'package:frontend/screens/profile/orders.dart';
-import 'package:frontend/screens/profile/rewards.dart';
-import 'package:frontend/screens/profile/settings.dart';
-import 'package:frontend/screens/profile/write_a_review.dart';
+import 'package:frontend/screens/profile/profile_components/claim_your_wins.dart';
+import 'package:frontend/screens/profile/profile_components/customer_service.dart';
+import 'package:frontend/screens/profile/profile_components/orders.dart';
+import 'package:frontend/screens/profile/profile_components/rewards.dart';
+import 'package:frontend/screens/profile/profile_components/settings.dart';
+import 'package:frontend/screens/profile/profile_components/write_a_review.dart';
+import 'package:frontend/services/authentication_service.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:provider/provider.dart';
 
 import '../../colors.dart';
 
@@ -362,8 +364,10 @@ class _ProfileState extends State<Profile> {
                   SizedBox(width: 6,),
 
                   InkWell(
-                    onTap: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => Login()));
+                    onTap: () async{
+                        await context.read<AuthenticationService>().signOut();
+                        Navigator.push(
+                          context, MaterialPageRoute(builder: (context) => Login()));
                     },
                     child: Container(
                       child: Row(

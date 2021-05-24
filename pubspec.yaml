@@ -28,6 +28,10 @@ dependencies:
   pinput: ^1.2.0
   material_design_icons_flutter: ^4.0.5955
   flutter_rating_bar:
+  firebase_core:
+  firebase_auth:
+  cloud_firestore: "^0.16.0+1"
+  provider:
 
 dev_dependencies:
   flutter_test:

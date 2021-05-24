@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "1072317924589",
+    "project_id": "captain-shopper-f4fb3",
+    "storage_bucket": "captain-shopper-f4fb3.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1072317924589:android:ec4d12e8fd17d7888178e4",
+        "android_client_info": {
+          "package_name": "com.example.frontend"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1072317924589-rcrljvb8cij3tl539aiclpf26ketp5ee.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.frontend",
+            "certificate_hash": "6e3149de31874394f35968ccef54f8552529337c"
+          }
+        },
+        {
+          "client_id": "1072317924589-12cqdtsu6mkerk8rtrvqthhh6u8gf3su.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBa9tqC1DYlVlJMiA0Z2fGN3__eLNAa-D0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1072317924589-12cqdtsu6mkerk8rtrvqthhh6u8gf3su.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
