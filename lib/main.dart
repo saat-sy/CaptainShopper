@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:frontend/colors.dart';
 import 'package:frontend/screens/authentication/login.dart';
 import 'package:frontend/screens/bottomNav/bottomNav.dart';
+import 'package:frontend/screens/order/placeOrder.dart';
+import 'package:frontend/screens/search/search.dart';
 import 'package:frontend/services/authentication_service.dart';
 import 'package:provider/provider.dart';
 

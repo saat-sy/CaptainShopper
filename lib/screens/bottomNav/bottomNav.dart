@@ -9,6 +9,7 @@ import 'package:frontend/screens/bottomNav/giveaway.dart';
 import 'package:frontend/screens/bottomNav/home.dart';
 import 'package:frontend/screens/cart/shopping_cart.dart';
 import 'package:frontend/screens/profile/profile.dart';
+import 'package:frontend/screens/search/search.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class BottomNav extends StatefulWidget {
@@ -24,9 +25,16 @@ class _BottomNavState extends State<BottomNav> {
 
   final screens = [Giveaway(), Coupons(), Home(), Deals(), Favorite()];
 
+  bool fromFirebase = false;
+  var url;
+
   @override
-  void initState() {
-    print(FirebaseAuth.instance.currentUser.phoneNumber);
+  initState() {
+    var u = FirebaseAuth.instance.currentUser.photoURL;
+    if (u != null) {
+      fromFirebase = true;
+      url = u;
+    }
     super.initState();
   }
 
@@ -37,6 +45,7 @@ class _BottomNavState extends State<BottomNav> {
       indexUsed = true;
     }
     return Scaffold(
+      backgroundColor: Colors.white,
       body: SafeArea(
         child: Column(mainAxisSize: MainAxisSize.max, children: <Widget>[
           Padding(
@@ -52,7 +61,14 @@ class _BottomNavState extends State<BottomNav> {
                     },
                     child: Container(
                         padding: EdgeInsets.only(top: 5),
-                        child: Icon(MdiIcons.accountCircle, size: 30)),
+                        child: fromFirebase ?
+                        ClipOval(
+                          child: Image.network(
+                            url,
+                            width: 30
+                          )
+                        ) :
+                        Icon(MdiIcons.accountCircle, size: 30, color: Colors.grey,)),
                   ),
                   Container(
                     padding: EdgeInsets.only(left: 35),
@@ -87,26 +103,36 @@ class _BottomNavState extends State<BottomNav> {
                 ]),
           ),
           Container(
-            height: 40,
+            
             padding: EdgeInsets.symmetric(horizontal: 15),
-            child: TextFormField(
-                decoration: InputDecoration(
-              contentPadding:
-                  EdgeInsets.symmetric(vertical: 0.0, horizontal: 10.0),
-              hintText: 'Search a product',
-              fillColor: Colors.white,
-              filled: true,
-              prefixIcon: Visibility(
-                visible: true,
-                child: Icon(
-                  Icons.search,
+            child: InkWell(
+              onTap: () {
+                Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => Search()));
+              },
+              child: Container(
+                height: 40,
+                padding: EdgeInsets.symmetric(horizontal: 15),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  border: Border.all(color: Colors.grey),
+                  borderRadius: BorderRadius.circular(5)
+                ),
+                child: Row(
+                  children: [
+                    Icon(Icons.search, color: Colors.grey,),
+                    SizedBox(width: 8,),
+                    Text(
+                     "Search a product",
+                     style: TextStyle(
+                       color: Colors.grey.shade600,
+                       fontSize: 15
+                     )
+                    )
+                  ],
                 ),
               ),
-              enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(6),
-                  borderSide:
-                      BorderSide(color: Colors.grey.shade500, width: 1)),
-            )),
+            ),
           ),
           screens[_currentIndex]
         ]),

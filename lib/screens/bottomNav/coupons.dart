@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:frontend/colors.dart';
@@ -10,50 +11,57 @@ class Coupons extends StatefulWidget {
 }
 
 class _CouponsState extends State<Coupons> {
-  List<CouponModel> coupon = [
-    CouponModel(
-      title: 'Superfruit Berries',
-      color: Color(0xFFD37C79),
-      image: 'assets/products/product1.png'
-    ),
-    CouponModel(
-      title: 'Happy Faces',
-      color: Color(0xFF5C4D93),
-      image: 'assets/products/product2.png'
-    ),
-    CouponModel(
-      title: 'Superfruit Berries',
-      color: Color(0xFFD37C79),
-      image: 'assets/products/product1.png'
-    ),
-    CouponModel(
-      title: 'Happy Faces',
-      color: Color(0xFF5C4D93),
-      image: 'assets/products/product2.png'
-    ),
-    CouponModel(
-      title: 'Superfruit Berries',
-      color: Color(0xFFD37C79),
-      image: 'assets/products/product1.png'
-    ),
-    CouponModel(
-      title: 'Happy Faces',
-      color: Color(0xFF5C4D93),
-      image: 'assets/products/product2.png'
-    ),
-  ];
+
+  bool isLoading = true;
+
+  final coupons = <CouponModel>[];
+
+  getGiveAwayProducts() async {
+    FirebaseFirestore.instance
+        .collection('Coupons')
+        .get()
+        .then((QuerySnapshot querySnapshot) {
+      querySnapshot.docs.forEach((doc) {
+        final s = CouponModel(
+            couponID: doc['coupon_id'],
+            images: doc['images'],
+            title: doc['title'],
+            brand: doc['brand'],
+            store: doc['store'],
+            validTill: doc['valid_till'],
+            discount: doc['discount'],
+            totalRating: doc['total_rating'],
+            backgroundColor: Color(int.parse(doc['background_color'].substring(0, 6), radix: 16) + 0xFF000000));
+        coupons.add(s);
+      });
+      setState(() {
+        isLoading = false;
+      });
+    });
+  }
+
+
+  @override
+  void initState() {
+    getGiveAwayProducts();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      child: Container(
+      child: isLoading
+        ? Center(
+          child: CircularProgressIndicator(),
+        ) : 
+      Container(
         padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
         child: ListView.builder(
-          itemCount: coupon.length,
+          itemCount: coupons.length,
           itemBuilder: (context, index) {
             return InkWell(
               onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => CouponProductScreen()));
+                Navigator.push(context, MaterialPageRoute(builder: (context) => CouponProductScreen(couponID: coupons[index].couponID,)));
               },
               child: Container(
                 margin: EdgeInsets.all(10),
@@ -72,28 +80,28 @@ class _CouponsState extends State<Coupons> {
                   children: [
                     Container(
                       decoration: new BoxDecoration(
-                        color: coupon[index].color,
+                        color: coupons[index].backgroundColor,
                         borderRadius: BorderRadius.circular(10),
                       ),
                       child: Column(
                         children: [
                           Padding(
                             padding: const EdgeInsets.all(8.0),
-                            child: Image(
+                            child: Image.network(
+                              coupons[index].images[0],
                               width: MediaQuery.of(context).size.width * 0.23,
-                              image: AssetImage(coupon[index].image),
                             ),
                           ),
                           Padding(
-                            padding: const EdgeInsets.all(10.0),
+                            padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 25),
                             child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      coupon[index].title,
+                                      coupons[index].title,
                                       style: TextStyle(
                                           color: Colors.white,
                                           fontWeight: FontWeight.bold,
@@ -103,7 +111,7 @@ class _CouponsState extends State<Coupons> {
                                       height: 3,
                                     ),
                                     Text(
-                                      'Brand: CandyPlus',
+                                      'Brand: ${coupons[index].brand}',
                                       style: TextStyle(
                                           color: Colors.white, fontSize: 15),
                                     ),
@@ -111,7 +119,7 @@ class _CouponsState extends State<Coupons> {
                                       height: 3,
                                     ),
                                     Text(
-                                      'Store: CVS',
+                                      'Store: ${coupons[index].store}',
                                       style: TextStyle(
                                           color: Colors.white, fontSize: 15),
                                     ),
@@ -119,7 +127,7 @@ class _CouponsState extends State<Coupons> {
                                       height: 3,
                                     ),
                                     RatingBarIndicator(
-                                      rating: 5,
+                                      rating: double.parse(coupons[index].totalRating),
                                       itemBuilder: (context, index) => Icon(
                                         Icons.star,
                                         color: Colors.amber,
@@ -129,51 +137,21 @@ class _CouponsState extends State<Coupons> {
                                     ),
                                   ],
                                 ),
-                                Row(
+                                Column(
                                   children: [
-                                    Column(
-                                      children: [
-                                        Text(
-                                          '75%',
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 25,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                        Text(
-                                          'OFF',
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 20,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    SizedBox(
-                                      width: 5,
+                                    Text(
+                                      '${coupons[index].discount}%',
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 25,
+                                          fontWeight: FontWeight.bold),
                                     ),
                                     Text(
-                                      '+',
+                                      'OFF',
                                       style: TextStyle(
-                                          color: Colors.white, fontSize: 25),
-                                    ),
-                                    Column(
-                                      children: [
-                                        Text(
-                                          '\$100',
-                                          style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 25,
-                                              fontWeight: FontWeight.bold),
-                                        ),
-                                        Text(
-                                          'Giveaway',
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 20,
-                                          ),
-                                        ),
-                                      ],
+                                        color: Colors.white,
+                                        fontSize: 20,
+                                      ),
                                     ),
                                   ],
                                 )
@@ -195,7 +173,7 @@ class _CouponsState extends State<Coupons> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              'Valid until 3rd August, 2021',
+                              'Valid until ${coupons[index].validTill}',
                               style: TextStyle(
                                 color: Colors.grey,
                                 fontSize: 13,

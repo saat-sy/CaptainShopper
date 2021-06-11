@@ -81,6 +81,7 @@ class _ContentState extends State<Content> {
             title: doc['title'],
             members: doc['members'].toString(),
             duration: '${doc['duration'].toString()} min',
+            giveawayId: doc['giveaway_id'],
             rating: doc['total_rating'].toString());
         giveaway.add(s);
       });
@@ -113,7 +114,9 @@ class _ContentState extends State<Content> {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => GiveawayProduct()));
+                            builder: (context) => GiveawayProduct(
+                              id: giveaway[index].giveawayId,
+                            )));
                   },
                   child: Container(
                     margin: EdgeInsets.symmetric(vertical: 7),

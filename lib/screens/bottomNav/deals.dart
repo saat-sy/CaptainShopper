@@ -1,7 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:frontend/colors.dart';
-import 'package:frontend/models/deals_model.dart';
+import 'package:frontend/models/products_model.dart';
 import 'package:frontend/screens/productScreens/dealsProduct.dart';
 
 class Deals extends StatefulWidget {
@@ -11,43 +12,52 @@ class Deals extends StatefulWidget {
 
 class _DealsState extends State<Deals> {
 
-  List<DealsModel> deals = [
-    DealsModel(
-      title: 'Superfruit Berries',
-      color: Color(0xFFD37C79),
-      image: 'assets/products/product1.png'
-    ),
-    DealsModel(
-      title: 'Happy Faces',
-      color: Color(0xFF5C4D93),
-      image: 'assets/products/product2.png'
-    ),
-    DealsModel(
-      title: 'Superfruit Berries',
-      color: Color(0xFFD37C79),
-      image: 'assets/products/product1.png'
-    ),
-    DealsModel(
-      title: 'Happy Faces',
-      color: Color(0xFF5C4D93),
-      image: 'assets/products/product2.png'
-    ),
-    DealsModel(
-      title: 'Superfruit Berries',
-      color: Color(0xFFD37C79),
-      image: 'assets/products/product1.png'
-    ),
-    DealsModel(
-      title: 'Happy Faces',
-      color: Color(0xFF5C4D93),
-      image: 'assets/products/product2.png'
-    ),
-  ];
+  bool isLoading = true;
+
+  final deals = <ProductsModel>[];
+
+  getDeals() async {
+    FirebaseFirestore.instance
+        .collection('Products')
+        .get()
+        .then((QuerySnapshot querySnapshot) {
+      querySnapshot.docs.forEach((doc) {
+        final s = ProductsModel(
+            images: doc['images'],
+            title: doc['title'],
+            discount: doc['discount'],
+            brand: doc['brand'],
+            totalRating: double.parse(doc['total_rating'].toString()),
+            reviews: doc['reviews'],
+            oldPrice: doc['oldPrice'],
+            productID: doc['product_id'],
+            newPrice: doc['newPrice']);
+        deals.add(s);
+      });
+      setState(() {
+        isLoading = false;
+      });
+    });
+  }
+
+
+  @override
+  void initState() {
+    getDeals();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      child: Container(
+      child: isLoading ?
+      Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          CircularProgressIndicator(),
+        ],
+      ) :
+      Container(
         padding: EdgeInsets.symmetric(horizontal: 10),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -66,33 +76,62 @@ class _DealsState extends State<Deals> {
                 itemBuilder: (context, index) {
                   return InkWell(
                     onTap: () {
-                      Navigator.push(context, MaterialPageRoute(builder: (context) => DealsProductScreen()));
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => DealsProductScreen(
+                        productID: deals[index].productID,
+                      )));
                     },
                     child: Container(
                       margin: EdgeInsets.symmetric(vertical: 10),
                       decoration: new BoxDecoration(
-                        color: deals[index].color,
                         borderRadius: BorderRadius.circular(10),
                         boxShadow: [
                           BoxShadow(
                               color: Colors.grey.shade300,
-                              offset: Offset(0, 4),
-                              blurRadius: 3.0,
+                              offset: Offset(0, 2),
+                              blurRadius: 5.0,
                               spreadRadius: 1.0)
                         ],
                       ),
                       child: Column(
                         children: [
                           Container(
+                            padding: EdgeInsets.symmetric(vertical: 15),
                             decoration: new BoxDecoration(
+                              color: Colors.white,
                               borderRadius: BorderRadius.circular(10),
                             ),
-                            child: Container(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Image(
-                                width: MediaQuery.of(context).size.width * 0.3,
-                                image: AssetImage(deals[index].image),
-                              ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Image.network(
+                                    deals[index].images[0],
+                                    width: MediaQuery.of(context).size.width * 0.3,
+                                  ),
+                                ),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Text(
+                                      deals[index].discount + "%",
+                                      style: TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 35,
+                                        fontWeight: FontWeight.bold
+                                      )
+                                    ),
+                                    Text(
+                                      'OFF',
+                                      style: TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 25,
+                                        fontWeight: FontWeight.bold
+                                      )
+                                    )
+                                  ],
+                                )
+                              ],
                             ),
                           ),
                           Align(
@@ -107,10 +146,10 @@ class _DealsState extends State<Deals> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    '5 Packs of ${deals[index].title}',
+                                    deals[index].title,
                                     style: TextStyle(
                                         color: Colors.black,
-                                        fontSize: 22,
+                                        fontSize: 20,
                                         fontWeight: FontWeight.bold),
                                   ),
                                   SizedBox(
@@ -119,7 +158,7 @@ class _DealsState extends State<Deals> {
                                   Row(
                                     children: <Widget>[
                                       Text(
-                                        '\$' + '199.99',
+                                        '\$' + deals[index].oldPrice,
                                         style: TextStyle(
                                             color: Colors.grey.shade400,
                                             fontSize: 21,
@@ -129,7 +168,7 @@ class _DealsState extends State<Deals> {
                                         width: 5,
                                       ),
                                       Text(
-                                        '\$' + '68.99',
+                                        '\$' + deals[index].newPrice,
                                         style: TextStyle(
                                           color: MyColors.PrimaryColor,
                                           fontSize: 21,
@@ -146,7 +185,7 @@ class _DealsState extends State<Deals> {
                                             color: Colors.green.withOpacity(0.15)),
                                         child: Center(
                                           child: Text(
-                                            '75' + '% OFF',
+                                            deals[index].discount + '% OFF',
                                             style: TextStyle(
                                                 color: MyColors.PrimaryColor,
                                                 fontSize: 13,
@@ -168,14 +207,14 @@ class _DealsState extends State<Deals> {
                                           Row(
                                             children: [
                                               Text(
-                                                '5.0',
+                                                deals[index].totalRating.toString(),
                                                 style: TextStyle(color: Colors.grey),
                                               ),
                                               SizedBox(
                                                 width: 5,
                                               ),
                                               RatingBarIndicator(
-                                                rating: 5,
+                                                rating: deals[index].totalRating,
                                                 itemBuilder: (context, index) => Icon(
                                                   Icons.star,
                                                   color: Colors.amber,
@@ -187,7 +226,7 @@ class _DealsState extends State<Deals> {
                                                 width: 5,
                                               ),
                                               Text(
-                                                '(6,256 Ratings)',
+                                                '(${deals[index].reviews.length} Ratings)',
                                                 style: TextStyle(color: Colors.grey.shade400),
                                               ),
                                             ],
@@ -205,7 +244,7 @@ class _DealsState extends State<Deals> {
                                                 width: 5,
                                               ),
                                               Text(
-                                                'Candy Cane',
+                                                deals[index].brand,
                                                 style: TextStyle(color: MyColors.PrimaryColor),
                                               ),
                                             ],

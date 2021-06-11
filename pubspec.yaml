@@ -26,11 +26,15 @@ dependencies:
     
   cupertino_icons: ^1.0.2
   pinput: ^1.2.0
+  image_picker:
+  image_cropper: 
+  qr_flutter:
   material_design_icons_flutter: ^4.0.5955
   flutter_rating_bar:
   firebase_core:
   firebase_auth:
-  cloud_firestore: "^0.16.0+1"
+  firebase_storage:
+  cloud_firestore:
   provider:
 
 dev_dependencies:
@@ -59,7 +63,12 @@ flutter:
     - assets/products/product1.png
     - assets/products/product2.png
     - assets/profile.png
+    - assets/empty_search.png
+    - assets/empty_favorites.png
+    - assets/empty_cart.png
+    - assets/empty_coupons.png
     - assets/support.png
+    - assets/order_confirmed.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

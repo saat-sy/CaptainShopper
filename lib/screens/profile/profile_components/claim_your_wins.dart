@@ -80,20 +80,6 @@ class _ClaimYourWinsState extends State<ClaimYourWins> {
 
                     ]
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Container(
-                        padding: EdgeInsets.all(5),
-                        decoration: BoxDecoration(
-                          color: MyColors.PrimaryColor
-                        ),
-                        child: Center(
-                          child: Text('10 pts', style: TextStyle(color: Colors.white))
-                        ),
-                      ),
-                    ],
-                  )
                 ],
               )
             );

@@ -1,39 +1,31 @@
 import 'package:flutter/material.dart';
 
-class CouponModel {
+class ProductsModel {
   List<dynamic> images;
   String title;
   String description;
   String oldPrice;
   String newPrice;
   String brand;
-  String store;
-  String validTill;
+  String productID;
   List<dynamic> reviews;
-  String storeLocation;
+  double totalRating;
   List<dynamic> ratings;
+  String quantity;
   List<dynamic> usernames;
   String discount;
-  Color backgroundColor;
-  String time;
-  String totalRating;
-  String couponID;
 
-  CouponModel({
+  ProductsModel({
     this.brand,
     this.description,
     this.discount,
+    this.quantity,
     this.newPrice,
-    this.couponID,
-    this.time,
     this.oldPrice,
-    this.store,
     this.totalRating,
-    this.backgroundColor,
-    this.storeLocation,
     this.ratings,
     this.reviews,
-    this.validTill,
+    this.productID,
     this.images,
     this.usernames,
     this.title,
